@@ -1,8 +1,9 @@
 
 # these tests are pretty bad, mostly to make sure no exceptions are thrown
 
+import requests
 import time
-from riotwatcher import RiotWatcher, NORTH_AMERICA
+from riotwatcher import RiotWatcher, NORTH_AMERICA, wait
 
 key = '<YOUR KEY HERE>'
 # if summoner doesnt have ranked teams, teams tests will fail
@@ -12,46 +13,48 @@ summoner_name = 'YOUR NAME HERE'
 
 w = RiotWatcher(key)
 
-
-def wait():
-    while not w.can_make_request():
-        time.sleep(1)
-
-
-def champion_tests():
-    wait()
+def get_all_champions_test():
+    wait(w)
     temp = w.get_all_champions()
-    wait()
-    w.get_champion(temp['champions'][0]['id'])
+    wait(w)
+    r = requests.get('https://na.api.pvp.net/api/lol/na/v1.2/champion/?freeToPlay=False&api_key=' + key)
 
+    return temp == r.json()
+
+def get_champion_test():
+    wait(w)
+    temp = w.get_all_champions()
+    wait(w)
+    w.get_champion(temp['champions'][0]['id'])
+    
 
 def current_game_tests():
-    wait()
+    wait(w)
     player = w.get_featured_games()['gameList'][0]['participants'][0]['summonerName']
-    wait()
+    wait(w)
     player_id = w.get_summoner(name=player)['id']
-    wait()
+    wait(w)
     w.get_current_game(player_id)
 
 
 def featured_games_tests():
-    wait()
+    wait(w)
     w.get_featured_games()
 
 
 def game_tests(summoner):
-    wait()
+    wait(w)
     w.get_recent_games(summoner['id'])
 
 
 def league_tests(summoner):
-    wait()
+    wait(w)
     w.get_league(summoner_ids=[summoner['id'], ])
-    wait()
+    wait(w)
     w.get_league_entry(summoner_ids=[summoner['id'], ])
-    wait()
+    wait(w)
     w.get_challenger()
-    wait()
+    wait(w)
     w.get_master()
 
 
@@ -76,41 +79,41 @@ def status_tests():
 
 
 def match_tests(match):
-    wait()
+    wait(w)
     w.get_match(match['matchId'])
 
 
 def match_history_tests(summoner):
-    wait()
+    wait(w)
     ms = w.get_match_history(summoner['id'])
     return ms['matches'][0]
 
 
 def stats_tests(summoner):
-    wait()
+    wait(w)
     w.get_stat_summary(summoner['id'])
-    wait()
+    wait(w)
     w.get_ranked_stats(summoner['id'])
 
 
 def summoner_tests(summoner_name):
-    wait()
+    wait(w)
     s = w.get_summoner(name=summoner_name)
-    wait()
+    wait(w)
     w.get_summoner(_id=s['id'])
-    wait()
+    wait(w)
     w.get_mastery_pages([s['id'], ])
-    wait()
+    wait(w)
     w.get_rune_pages([s['id'], ])
-    wait()
+    wait(w)
     w.get_summoner_name([s['id'], ])
     return s
 
 
 def team_tests(summoner):
-    wait()
+    wait(w)
     t = w.get_teams_for_summoner(summoner['id'])
-    wait()
+    wait(w)
     w.get_team(t[0]['fullId'])
 
 
@@ -119,8 +122,10 @@ def main():
     print('static tests passed')
     status_tests()
     print('status tests passed')
-    champion_tests()
-    print('champion tests passed')
+    result = get_all_champion_test()
+    print('get all champion test passed:', result)
+    get_champion_test()
+    print('get champion test passed')
     featured_games_tests()
     print('featured games tests passed')
     current_game_tests()
