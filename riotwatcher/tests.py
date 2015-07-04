@@ -2,7 +2,6 @@
 # these tests are pretty bad, mostly to make sure no exceptions are thrown
 
 import requests
-import time
 from riotwatcher import RiotWatcher, NORTH_AMERICA, wait
 
 key = '<YOUR KEY HERE>'
