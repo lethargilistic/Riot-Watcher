@@ -189,6 +189,10 @@ def raise_status(response):
     else:
         response.raise_for_status()
 
+def wait(watcher):
+    '''The RiotWatcher object waits until it can make a request.'''
+    while not watcher.can_make_request():
+        time.sleep(1)
 
 class RateLimit:
     def __init__(self, allowed_requests, seconds):
