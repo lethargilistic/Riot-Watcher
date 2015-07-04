@@ -13,7 +13,7 @@ summoner_name = 'YOUR NAME HERE'
 
 w = RiotWatcher(key)
 
-def get_all_champions_test():
+def test_get_all_champions():
     wait(w)
     temp = w.get_all_champions()
     wait(w)
@@ -21,14 +21,14 @@ def get_all_champions_test():
 
     return temp == r.json()
 
-def get_champion_test():
+def test_get_champion():
     wait(w)
     temp = w.get_all_champions()
     wait(w)
     w.get_champion(temp['champions'][0]['id'])
     
 
-def current_game_tests():
+def test_current_game():
     wait(w)
     player = w.get_featured_games()['gameList'][0]['participants'][0]['summonerName']
     wait(w)
@@ -37,17 +37,17 @@ def current_game_tests():
     w.get_current_game(player_id)
 
 
-def featured_games_tests():
+def test_featured_games():
     wait(w)
     w.get_featured_games()
 
 
-def game_tests(summoner):
+def test_game(summoner):
     wait(w)
     w.get_recent_games(summoner['id'])
 
 
-def league_tests(summoner):
+def test_league(summoner):
     wait(w)
     w.get_league(summoner_ids=[summoner['id'], ])
     wait(w)
@@ -58,7 +58,7 @@ def league_tests(summoner):
     w.get_master()
 
 
-def static_tests():
+def test_static():
     temp = w.static_get_champion_list()
     w.static_get_champion(temp['data'][list(temp['data'])[0]]['id'])
     temp = w.static_get_item_list()
@@ -73,30 +73,30 @@ def static_tests():
     w.static_get_versions()
 
 
-def status_tests():
+def test_status():
     w.get_server_status()
     w.get_server_status(region=NORTH_AMERICA)
 
 
-def match_tests(match):
+def test_match(match):
     wait(w)
     w.get_match(match['matchId'])
 
 
-def match_history_tests(summoner):
+def test_match_history(summoner):
     wait(w)
     ms = w.get_match_history(summoner['id'])
     return ms['matches'][0]
 
 
-def stats_tests(summoner):
+def test_stats(summoner):
     wait(w)
     w.get_stat_summary(summoner['id'])
     wait(w)
     w.get_ranked_stats(summoner['id'])
 
 
-def summoner_tests(summoner_name):
+def test_summoner(summoner_name):
     wait(w)
     s = w.get_summoner(name=summoner_name)
     wait(w)
@@ -110,7 +110,7 @@ def summoner_tests(summoner_name):
     return s
 
 
-def team_tests(summoner):
+def test_team(summoner):
     wait(w)
     t = w.get_teams_for_summoner(summoner['id'])
     wait(w)
@@ -118,31 +118,31 @@ def team_tests(summoner):
 
 
 def main():
-    static_tests()
+    test_static()
     print('static tests passed')
-    status_tests()
+    test_status()
     print('status tests passed')
-    result = get_all_champion_test()
+    result = test_get_all_champions()
     print('get all champion test passed:', result)
-    get_champion_test()
+    test_get_champion()
     print('get champion test passed')
-    featured_games_tests()
+    test_featured_games()
     print('featured games tests passed')
-    current_game_tests()
+    test_current_game()
     print('current games tests passed')
-    s = summoner_tests(summoner_name)
+    s = test_summoner(summoner_name)
     print('summoner tests passed')
-    game_tests(s)
+    test_game(s)
     print('game tests passed')
-    league_tests(s)
+    test_league(s)
     print('league tests passed')
-    stats_tests(s)
+    test_stats(s)
     print('stats tests passed')
-    team_tests(s)
+    test_team(s)
     print('team tests passed')
-    m = match_history_tests(s)
+    m = test_match_history(s)
     print('match history tests passed')
-    match_tests(m)
+    test_match(m)
     print('match passed')
     print('all tests passed, w00t. if only they were better tests...')
 
