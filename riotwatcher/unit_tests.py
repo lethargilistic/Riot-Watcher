@@ -1,3 +1,4 @@
+import re
 import requests
 import unittest
 from riotwatcher import RiotWatcher, NORTH_AMERICA, LoLException, wait
@@ -46,6 +47,21 @@ class TestRiotWatcherMethods(unittest.TestCase):
     def test_get_champion_for_nonexistant_champ(self):
         with self.assertRaises(LoLException):
             self.w.get_champion(420)
+
+    def test_featured_games(self):
+        #This test may fail if one of the featured games ends after the method_json call and before the correct_json call.
+        
+        #Have to remove the game length parameters from the json, since those will not match
+        #Ideally, test would also make sure that the second game has a larger game length.
+
+        game_length_regex = r"'gameLength':\s*\d+,"
+        
+        method_json = re.sub(game_length_regex, "", str(self.w.get_featured_games()))
+
+        r = requests.get('https://na.api.pvp.net/observer-mode/rest/featured?api_key=' + self.key)
+        correct_json = re.sub(game_length_regex, "", str(r.json()))
+
+        self.assertEqual(correct_json, method_json)
 
 if __name__ == '__main__':
     unittest.main()
